@@ -20,6 +20,7 @@ router
   .group(() => {
     router
       .group(() => {
+        router.post('register', [AuthController, 'register'])
         router.post('authenticated', [AuthController, 'login'])
         router.delete('logout', [AuthController, 'logout']).use(middleware.auth())
         router.get('my', [AuthController, 'me'])
