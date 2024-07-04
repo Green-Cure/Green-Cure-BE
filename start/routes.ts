@@ -23,7 +23,7 @@ router
         router.post('register', [AuthController, 'register'])
         router.post('authenticated', [AuthController, 'login'])
         router.delete('logout', [AuthController, 'logout']).use(middleware.auth())
-        router.get('my', [AuthController, 'me'])
+        router.get('my', [AuthController, 'me']).use(middleware.auth())
       })
       .prefix('auth')
   })

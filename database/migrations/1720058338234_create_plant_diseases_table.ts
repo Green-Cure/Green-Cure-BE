@@ -1,16 +1,22 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
-export default class PlantDiseases extends BaseSchema {
+export default class extends BaseSchema {
   protected tableName = 'plant_diseases'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.bigIncrements('id')
-      table.bigInteger('plant_id').notNullable()
+      table.increments('id')
+      table
+        .integer('plant_id')
+        .notNullable()
+        .unsigned()
+        .references('id')
+        .inTable('plants')
+        .onDelete('CASCADE')
       table.string('name').notNullable()
       table.text('description').notNullable()
-      table.timestamp('deleted_at').notNullable()
       table.timestamps()
+      table.timestamp('deleted_at').nullable()
     })
   }
 

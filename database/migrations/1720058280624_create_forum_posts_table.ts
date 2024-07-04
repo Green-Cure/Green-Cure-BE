@@ -1,16 +1,22 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
-export default class ForumPosts extends BaseSchema {
+export default class extends BaseSchema {
   protected tableName = 'forum_posts'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.bigIncrements('id')
-      table.bigInteger('user_id').notNullable()
+      table.increments('id')
+      table
+        .integer('user_id')
+        .notNullable()
+        .unsigned()
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE')
       table.text('content').notNullable()
       table.string('image').notNullable()
-      table.timestamp('deleted_at').notNullable()
       table.timestamps()
+      table.timestamp('deleted_at').nullable()
     })
   }
 
