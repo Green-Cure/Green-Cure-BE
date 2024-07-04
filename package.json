@@ -60,6 +60,11 @@
     "mysql2": "^3.10.2",
     "reflect-metadata": "^0.2.2"
   },
+  "overrides": {
+    "adonis-lucid-soft-deletes": {
+      "@adonisjs/lucid": "^21.1.0"
+    }
+  },
   "hotHook": {
     "boundaries": [
       "./app/controllers/**/*.ts",
