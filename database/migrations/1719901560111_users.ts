@@ -10,10 +10,10 @@ export default class Users extends BaseSchema {
       table.string('username').notNullable()
       table.string('email').notNullable()
       table.string('password').notNullable()
-      table.string('avatar')
+      table.string('avatar').nullable()
       table.string('phone').notNullable()
       table.enu('role', ['1', '2', '3']).notNullable()
-      table.timestamp('deleted_at').notNullable()
+      table.timestamp('deleted_at').nullable()
       table.timestamps()
     })
   }
