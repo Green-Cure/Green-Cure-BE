@@ -62,7 +62,7 @@ export default class ArticlesController {
     })
     return response.status(200).json({
       statusCode: 200,
-      message: 'Article Created!',
+      message: 'Article Created',
     })
   }
 
@@ -101,7 +101,7 @@ export default class ArticlesController {
     await article.save()
     return response.status(200).json({
       statusCode: 200,
-      message: 'Article updated!',
+      message: 'Article updated',
     })
   }
   async destroy({ params, response }: HttpContext) {
