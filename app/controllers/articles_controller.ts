@@ -6,12 +6,24 @@ import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
 
 export default class ArticlesController {
-  async index({ response }: HttpContext) {
-    const articles = await Article.all()
+  async index({ request, response }: HttpContext) {
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 10)
+
+    const articles = await Article.query().paginate(page, limit)
+
+    const meta = {
+      total: articles.total,
+      perPage: limit,
+      currentPage: page,
+      lastPage: articles.lastPage,
+    }
+
     return response.status(200).json({
       statusCode: 200,
       message: 'Display All Data',
-      data: articles,
+      data: articles.rows,
+      meta: meta,
     })
   }
 
@@ -39,7 +51,11 @@ export default class ArticlesController {
     })
     Article.create({
       title: data.title,
-      slug: data.slug,
+      slug: data.title
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '')
+        .replace(/^-+|-+$/g, ''),
       userId: data.author,
       content: data.content,
       image: imageName,
@@ -60,7 +76,13 @@ export default class ArticlesController {
         message: 'Article not found',
       })
     }
+
     article.title = data.title
+    article.slug = data.title
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '')
+      .replace(/^-+|-+$/g, '')
     article.content = data.content
     if (data.image) {
       const imageName = `${cuid()}.${data.image.extname}`
