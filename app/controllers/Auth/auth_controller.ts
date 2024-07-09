@@ -7,7 +7,6 @@ export default class AuthController {
     const data = await request.validateUsing(registerValidator)
     const user = await User.create(data)
     return response.status(200).json({
-      status: true,
       statusCode: 200,
       message: 'Register Successfully',
       data: [
@@ -24,8 +23,8 @@ export default class AuthController {
       const user = await User.verifyCredentials(payload.email, payload.password)
       const token = await User.accessTokens.create(user)
       return response.status(200).json({
-        status: true,
         statusCode: 200,
+        code: 'OK',
         message: 'Authenticated',
         data: [
           {
@@ -35,8 +34,8 @@ export default class AuthController {
       })
     } catch (error) {
       return response.status(401).json({
-        status: false,
         statusCode: 401,
+        code: 'UNAUTHORIZED',
         message: 'Authentication failed. Invalid credentials.',
       })
     }
@@ -46,8 +45,8 @@ export default class AuthController {
     const user = auth.user!
     await User.accessTokens.delete(user, user.currentAccessToken.identifier)
     return response.status(200).json({
-      status: true,
       statusCode: 200,
+      code: 'OK',
       message: 'Logout Successfully.',
     })
   }
@@ -55,8 +54,8 @@ export default class AuthController {
   async me({ auth, response }: HttpContext) {
     await auth.check()
     return response.status(200).json({
-      status: false,
       statusCode: 200,
+      code: 'OK',
       message: 'Display All Data.',
       data: [
         {

@@ -1,5 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import HttpCodes from '#constants/http_codes'
+import HttpMessages from '#constants/http_messages'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -13,7 +15,12 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
-    return super.handle(error, ctx)
+    // return super.handle(error, ctx)
+    const statusCode = (error as any).status || 200
+    const code = HttpCodes[statusCode]
+    const message = (error as any).message || HttpMessages[statusCode] || HttpMessages[200]
+    const messages = (error as any).messages
+    return ctx.response.status(statusCode).send({ statusCode, code, message, messages })
   }
 
   /**
