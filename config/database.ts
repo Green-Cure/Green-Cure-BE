@@ -12,6 +12,9 @@ const dbConfig = defineConfig({
         user: env.get('DB_USER'),
         password: env.get('DB_PASSWORD'),
         database: env.get('DB_DATABASE'),
+        ssl: {
+          rejectUnauthorized: false, // Jika sertifikat SSL tidak diverifikasi, ini bisa diatur ke false
+        },
       },
       migrations: {
         naturalSort: true,

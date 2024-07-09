@@ -7,13 +7,15 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table
-        .integer('author')
+        .integer('user_id')
         .notNullable()
         .unsigned()
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
       table.string('title').notNullable()
+      table.string('slug').notNullable()
+      table.string('image').notNullable()
       table.text('content').notNullable()
       table.timestamps()
       table.timestamp('deleted_at').nullable()
