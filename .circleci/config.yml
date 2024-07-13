@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Deploy app to Heroku
           command: |
-            git push https://heroku:HRKU-8c939cb7-0f30-440a-bd3d-651ca9cff8a9@https://git.heroku.com/green-cure.git main
+            git push https://heroku:HRKU-8c939cb7-0f30-440a-bd3d-651ca9cff8a9@git.heroku.com/green-cure.git main
 workflows:
   build-deploy:
     jobs:
