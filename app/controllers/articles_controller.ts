@@ -22,7 +22,7 @@ export default class ArticlesController {
     return response.status(200).json({
       statusCode: 200,
       message: 'Display All Data',
-      data: articles.rows,
+      data: articles.toJSON().data,
       meta: meta,
     })
   }
