@@ -8,6 +8,7 @@ export default class AuthController {
     const user = await User.create(data)
     return response.status(200).json({
       statusCode: 200,
+      code: 'OK',
       message: 'Register Successfully',
       data: [
         {

@@ -1,9 +1,9 @@
 import vine from '@vinejs/vine'
 
-export const createArticleValidator = vine.compile(
+export const createPlantValidator = vine.compile(
   vine.object({
-    title: vine.string().trim(),
-    content: vine.string().trim(),
+    type: vine.string().trim(),
+    name: vine.string().trim(),
     image: vine.file({
       size: '2mb',
       extnames: ['jpg', 'png', 'jpeg'],
@@ -11,10 +11,10 @@ export const createArticleValidator = vine.compile(
   })
 )
 
-export const updateArticleValidator = vine.compile(
+export const updatePlantValidator = vine.compile(
   vine.object({
-    title: vine.string().trim(),
-    content: vine.string().trim(),
+    type: vine.string().trim(),
+    name: vine.string().trim(),
     image: vine
       .file({
         size: '2mb',
