@@ -1,8 +1,7 @@
 import vine from '@vinejs/vine'
 
-export const createArticleValidator = vine.compile(
+export const createForumPostsValidator = vine.compile(
   vine.object({
-    title: vine.string().trim(),
     content: vine.string().trim(),
     image: vine.file({
       size: '2mb',
@@ -11,9 +10,8 @@ export const createArticleValidator = vine.compile(
   })
 )
 
-export const updateArticleValidator = vine.compile(
+export const updateForumPostsValidator = vine.compile(
   vine.object({
-    title: vine.string().trim(),
     content: vine.string().trim(),
     image: vine
       .file({

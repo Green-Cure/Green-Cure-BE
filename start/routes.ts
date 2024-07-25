@@ -14,17 +14,6 @@ import { middleware } from './kernel.js'
 
 const PATH_TRAVERSAL_REGEX = /(?:^|[\\/])\.\.(?:[\\/]|$)/
 
-router.get('/uploads/*', ({ request, response }) => {
-  const filePath = request.param('*').join(sep)
-  const normalizedPath = normalize(filePath)
-
-  if (PATH_TRAVERSAL_REGEX.test(normalizedPath)) {
-    return response.badRequest('Malformed path')
-  }
-
-  const absolutePath = app.makePath('uploads', normalizedPath)
-  return response.download(absolutePath)
-})
 router
   .group(() => {
     router
@@ -44,5 +33,42 @@ router
         .delete('articles/:slug', '#controllers/articles_controller.destroy')
         .use(middleware.auth())
     })
+    router.group(() => {
+      router.get('forum', '#controllers/forums_controller.index').use(middleware.auth())
+      router.get('forum/my', '#controllers/forums_controller.getMyForum').use(middleware.auth())
+      router.get('forum/:id', '#controllers/forums_controller.show').use(middleware.auth())
+      router.post('forum', '#controllers/forums_controller.store').use(middleware.auth())
+      router.put('forum/:id', '#controllers/forums_controller.update').use(middleware.auth())
+      router.delete('forum/:id', '#controllers/forums_controller.destroy').use(middleware.auth())
+      // router.post('forum/replies', '#controllers/forum_controller.destroy').use(middleware.auth())
+    })
+    router.group(() => {
+      router.get('plants', '#controllers/plants_controller.index')
+      router.get('plants/:id', '#controllers/plants_controller.show')
+      router.post('plants', '#controllers/plants_controller.store').use(middleware.auth())
+      router.put('plants/:id', '#controllers/plants_controller.update').use(middleware.auth())
+      router.delete('plants/:id', '#controllers/plants_controller.destroy').use(middleware.auth())
+    })
+    router.group(() => {
+      router.post('scan', '#controllers/detection_plants_controller.scanner').use(middleware.auth())
+      router
+        .get('scan/result', '#controllers/detection_plants_controller.myScan')
+        .use(middleware.auth())
+      router
+        .get('scan/result/:id', '#controllers/detection_plants_controller.show')
+        .use(middleware.auth())
+    })
   })
   .prefix('v1')
+
+router.get('/uploads/*', ({ request, response }) => {
+  const filePath = request.param('*').join(sep)
+  const normalizedPath = normalize(filePath)
+
+  if (PATH_TRAVERSAL_REGEX.test(normalizedPath)) {
+    return response.badRequest('Malformed path')
+  }
+
+  const absolutePath = app.makePath('uploads', normalizedPath)
+  return response.download(absolutePath)
+})

@@ -6,6 +6,8 @@ import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import Article from './article.js'
+import ForumPost from './forum_post.js'
+import ResultScanner from './result_scanner.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -15,6 +17,12 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 export default class User extends compose(BaseModel, AuthFinder) {
   @hasMany(() => Article)
   declare articles: HasMany<typeof Article>
+
+  @hasMany(() => ForumPost)
+  declare forum_posts: HasMany<typeof ForumPost>
+
+  @hasMany(() => ResultScanner)
+  declare result_scanner: HasMany<typeof ResultScanner>
 
   @column({ isPrimary: true })
   declare id: number

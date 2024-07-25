@@ -1,136 +1,122 @@
-import Article from '#models/article'
-import { createArticleValidator, updateArticleValidator } from '#validators/article'
-import type { HttpContext } from '@adonisjs/core/http'
+import Plant from '#models/plant'
+import { createPlantValidator, updatePlantValidator } from '#validators/plant'
 import { cuid } from '@adonisjs/core/helpers'
+import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
 
-export default class ArticlesController {
+export default class PlantsController {
   async index({ request, response }: HttpContext) {
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
 
-    const articles = await Article.query().paginate(page, limit)
+    const plants = await Plant.query().paginate(page, limit)
 
     const meta = {
-      total: articles.total,
+      total: plants.total,
       perPage: limit,
       currentPage: page,
-      lastPage: articles.lastPage,
+      lastPage: plants.lastPage,
     }
 
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
       message: 'Display All Data',
-      data: articles.toJSON().data,
+      data: plants.toJSON().data,
       meta: meta,
     })
   }
-
   async show({ params, response }: HttpContext) {
     try {
-      const article = await Article.findBy('slug', params.slug)
+      const plant = await Plant.findBy('id', params.id)
       return response.status(200).json({
         statusCode: 200,
         code: 'OK',
-        message: 'Display Article Data',
-        data: article,
+        message: 'Display Plant Data',
+        data: plant,
       })
     } catch (error) {
       return response.status(404).json({
         statusCode: 404,
         code: 'NOT_FOUND',
-        message: 'Article Not Found',
+        message: 'Plant Not Found',
       })
     }
   }
-
-  async store({ request, auth, response }: HttpContext) {
-    const data = await request.validateUsing(createArticleValidator)
+  async store({ request, response }: HttpContext) {
+    const data = await request.validateUsing(createPlantValidator)
     const imageName = `${cuid()}.${data.image.extname}`
     data.image.move(app.makePath('uploads'), {
       name: imageName,
     })
-    Article.create({
-      title: data.title,
-      slug: data.title
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]/g, '')
-        .replace(/^-+|-+$/g, ''),
-      userId: auth.user!.id,
-      content: data.content,
+    Plant.create({
+      name: data.name,
+      type: data.type,
       image: imageName,
     })
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
-      message: 'Article Created',
+      message: 'Plant Created',
     })
   }
-
   async update({ request, response, params }: HttpContext) {
-    const data = await request.validateUsing(updateArticleValidator)
-    const slug = params.slug
-    const article = await Article.findBy('slug', slug)
-    if (!article) {
+    const data = await request.validateUsing(updatePlantValidator)
+    const id = params.id
+    const plant = await Plant.findBy('id', id)
+    if (!plant) {
       return response.status(404).json({
         statusCode: 404,
         code: 'NOT_FOUND',
-        message: 'Article not found',
+        message: 'Plant not found',
       })
     }
 
-    article.title = data.title
-    article.slug = data.title
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]/g, '')
-      .replace(/^-+|-+$/g, '')
-    article.content = data.content
+    plant.name = data.name
+    plant.type = data.type
     if (data.image) {
       const imageName = `${cuid()}.${data.image.extname}`
       data.image.move(app.makePath('uploads'), {
         name: imageName,
       })
-      if (article.image) {
-        const oldImagePath = app.makePath(`uploads/${article.image}`)
+      if (plant.image) {
+        const oldImagePath = app.makePath(`uploads/${plant.image}`)
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath)
         }
       }
-      article.image = imageName
+      plant.image = imageName
     }
 
-    await article.save()
+    await plant.save()
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
-      message: 'Article updated',
+      message: 'Plant updated',
     })
   }
   async destroy({ params, response }: HttpContext) {
-    const slug = params.slug
-    const article = await Article.findBy('slug', slug)
-    if (!article) {
+    const id = params.id
+    const plant = await Plant.findBy('id', id)
+    if (!plant) {
       return response.status(404).json({
         statusCode: 404,
         code: 'NOT_FOUND',
-        message: 'Article not found',
+        message: 'Plant not found',
       })
     }
-    if (article.image) {
-      const oldImagePath = app.makePath(`uploads/${article.image}`)
+    if (plant.image) {
+      const oldImagePath = app.makePath(`uploads/${plant.image}`)
       if (fs.existsSync(oldImagePath)) {
         fs.unlinkSync(oldImagePath)
       }
     }
-    await article.delete()
+    await plant.delete()
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
-      message: 'Article deleted!',
+      message: 'Plant deleted!',
     })
   }
 }

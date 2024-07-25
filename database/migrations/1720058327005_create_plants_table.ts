@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('name').notNullable()
       table.string('image').notNullable()
-      table.json('type').notNullable()
+      table.string('type').notNullable()
       table.timestamps()
       table.timestamp('deleted_at').nullable()
     })

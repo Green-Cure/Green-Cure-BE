@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('CASCADE')
       table.text('content').notNullable()
-      table.string('image').notNullable()
+      table.string('image').nullable()
       table.timestamps()
       table.timestamp('deleted_at').nullable()
     })
