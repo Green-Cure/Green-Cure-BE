@@ -1,9 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import User from './user.js'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import ForumReply from './forum_reply.js'
 
 export default class ForumPost extends BaseModel {
+  @hasMany(() => ForumReply)
+  declare replies: HasMany<typeof ForumReply>
+
   @column({ isPrimary: true })
   declare id: number
 

@@ -40,7 +40,12 @@ router
       router.post('forum', '#controllers/forums_controller.store').use(middleware.auth())
       router.put('forum/:id', '#controllers/forums_controller.update').use(middleware.auth())
       router.delete('forum/:id', '#controllers/forums_controller.destroy').use(middleware.auth())
-      // router.post('forum/replies', '#controllers/forum_controller.destroy').use(middleware.auth())
+      router
+        .delete('reply/:id', '#controllers/forums_controller.destroyForumReply')
+        .use(middleware.auth())
+      router
+        .post('forum/:id/reply', '#controllers/forums_controller.replies')
+        .use(middleware.auth())
     })
     router.group(() => {
       router.get('plants', '#controllers/plants_controller.index')
@@ -58,6 +63,7 @@ router
         .get('scan/result/:id', '#controllers/detection_plants_controller.show')
         .use(middleware.auth())
     })
+    router.get('weather-today', '#controllers/weathers_controller.today')
   })
   .prefix('v1')
 

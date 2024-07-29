@@ -5,7 +5,14 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class AuthController {
   async register({ request, response }: HttpContext) {
     const data = await request.validateUsing(registerValidator)
-    const user = await User.create(data)
+    const user = await User.create({
+      name: data.name,
+      username: data.username,
+      phone: data.phone,
+      email: data.email,
+      password: data.password,
+      role: '2',
+    })
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
