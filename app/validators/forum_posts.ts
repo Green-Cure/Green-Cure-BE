@@ -21,3 +21,14 @@ export const updateForumPostsValidator = vine.compile(
       .optional(),
   })
 )
+export const replyForumPostsValidator = vine.compile(
+  vine.object({
+    content: vine.string().trim(),
+    image: vine
+      .file({
+        size: '2mb',
+        extnames: ['jpg', 'png', 'jpeg'],
+      })
+      .optional(),
+  })
+)
