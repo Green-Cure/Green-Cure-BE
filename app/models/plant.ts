@@ -12,7 +12,10 @@ export default class Plant extends BaseModel {
   declare name: string
 
   @column()
-  declare type: string
+  declare latin: string
+
+  @column()
+  declare description: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

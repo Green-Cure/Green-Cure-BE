@@ -5,6 +5,15 @@ export default class PlantDisease extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
+  @column()
+  declare image: string
+
+  @column()
+  declare name: string
+
+  @column()
+  declare description: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

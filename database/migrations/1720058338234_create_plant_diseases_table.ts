@@ -6,14 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table
-        .integer('plant_id')
-        .notNullable()
-        .unsigned()
-        .references('id')
-        .inTable('plants')
-        .onDelete('CASCADE')
       table.string('name').notNullable()
+      table.string('image').notNullable()
       table.text('description').notNullable()
       table.timestamps()
       table.timestamp('deleted_at').nullable()
