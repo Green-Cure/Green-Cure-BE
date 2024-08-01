@@ -1,4 +1,3 @@
-import Plant from '#models/plant'
 import PlantDisease from '#models/plant_disease'
 import {
   createPlantDiseasesValidator,
@@ -9,7 +8,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
 
-export default class PlantsController {
+export default class PlantsDiseases {
   async index({ request, response }: HttpContext) {
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
@@ -54,7 +53,7 @@ export default class PlantsController {
     data.image.move(app.makePath('uploads'), {
       name: imageName,
     })
-    Plant.create({
+    PlantDisease.create({
       name: data.name,
       description: data.description,
       image: imageName,
