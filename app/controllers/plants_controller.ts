@@ -52,7 +52,8 @@ export default class PlantsController {
     })
     Plant.create({
       name: data.name,
-      type: data.type,
+      latin: data.latin,
+      description: data.description,
       image: imageName,
     })
     return response.status(200).json({
@@ -74,7 +75,8 @@ export default class PlantsController {
     }
 
     plant.name = data.name
-    plant.type = data.type
+    plant.latin = data.latin
+    plant.description = data.description
     if (data.image) {
       const imageName = `${cuid()}.${data.image.extname}`
       data.image.move(app.makePath('uploads'), {

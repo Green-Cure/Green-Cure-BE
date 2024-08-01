@@ -7,8 +7,9 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.string('name').notNullable()
+      table.string('latin').notNullable()
       table.string('image').notNullable()
-      table.string('type').notNullable()
+      table.text('description').notNullable()
       table.timestamps()
       table.timestamp('deleted_at').nullable()
     })
