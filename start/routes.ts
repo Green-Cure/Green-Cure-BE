@@ -84,7 +84,7 @@ router
         .use(middleware.auth())
     })
     router.group(() => {
-      router.get('user', '#controllers/user_controller.index').use(middleware.auth())
+      router.get('user', '#controllers/users_controller.index').use(middleware.auth())
     })
     router.get('weather-today', '#controllers/weathers_controller.today')
   })
