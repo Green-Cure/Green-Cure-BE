@@ -5,7 +5,10 @@ import { createForumPostsValidator, updateForumPostsValidator } from '#validator
 import { cuid } from '@adonisjs/core/helpers'
 import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
-import ForumReply from '#models/forum_reply'
+import ForumReplies from '#models/forum_replies'
+import ReportedPost from '#models/reported_post'
+import { reportValidation } from '#validators/report'
+import ReportedPostReplies from '#models/reported_post_replies'
 
 export default class ForumsController {
   async index({ response }: HttpContext) {
@@ -27,13 +30,20 @@ export default class ForumsController {
   async getMyForum({ auth, response }: HttpContext) {
     const userId = auth.user!.id
 
-    const forums = await ForumPost.query().where('user_id', userId)
+    const forums = await ForumPost.query()
+      .where('user_id', userId)
+      .preload('author')
+      .preload('replies')
 
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
-      message: 'Display My Forum Posts',
-      data: forums,
+      message: 'Display My Forums',
+      data: forums.map((forum) => ({
+        ...forum.serialize(),
+        author: forum.author.serialize(),
+        replies_count: forum.replies.length,
+      })),
     })
   }
 
@@ -63,10 +73,13 @@ export default class ForumsController {
 
   async store({ request, auth, response }: HttpContext) {
     const data = await request.validateUsing(createForumPostsValidator)
-    const imageName = `${cuid()}.${data.image.extname}`
-    data.image.move(app.makePath('uploads'), {
-      name: imageName,
-    })
+    let imageName: string | null = null
+    if (data.image) {
+      imageName = `${cuid()}.${data.image.extname}`
+      data.image.move(app.makePath('uploads'), {
+        name: imageName,
+      })
+    }
     ForumPost.create({
       userId: auth.user!.id,
       content: data.content,
@@ -137,12 +150,15 @@ export default class ForumsController {
   }
   async replies({ request, params, auth, response }: HttpContext) {
     const id = params.id
+    let imageName: string | null = null
     const data = await request.validateUsing(createForumPostsValidator)
-    const imageName = `${cuid()}.${data.image.extname}`
-    data.image.move(app.makePath('uploads'), {
-      name: imageName,
-    })
-    ForumReply.create({
+    if (data.image) {
+      imageName = `${cuid()}.${data.image.extname}`
+      data.image.move(app.makePath('uploads'), {
+        name: imageName,
+      })
+    }
+    ForumReplies.create({
       userId: auth.user!.id,
       forumPostId: id,
       content: data.content,
@@ -154,9 +170,9 @@ export default class ForumsController {
       message: 'Reply Successfully',
     })
   }
-  async destroyForumReply({ params, response }: HttpContext) {
+  async destroyForumReplies({ params, response }: HttpContext) {
     const id = params.id
-    const forumPost = await ForumReply.findBy('id', id)
+    const forumPost = await ForumReplies.findBy('id', id)
     if (!forumPost) {
       return response.status(404).json({
         statusCode: 404,
@@ -175,6 +191,67 @@ export default class ForumsController {
       statusCode: 200,
       code: 'OK',
       message: 'Forum Reply deleted!',
+    })
+  }
+  async reportForum({ request, params, auth, response }: HttpContext) {
+    const id = params.id
+    const data = await request.validateUsing(reportValidation)
+    ReportedPost.create({
+      userId: auth.user!.id,
+      forumPostId: id,
+      reason: data.reason,
+    })
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Report Successfully',
+    })
+  }
+  async reportRepliesForum({ request, params, auth, response }: HttpContext) {
+    const id = params.id
+    const data = await request.validateUsing(reportValidation)
+    ReportedPostReplies.create({
+      userId: auth.user!.id,
+      forumRepliesId: id,
+      reason: data.reason,
+    })
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Report Successfully',
+    })
+  }
+  async allReport({ request, response }: HttpContext) {
+    const reportedPosts = await ReportedPost.query().preload('user').preload('forum')
+
+    const reportedReplies = await ReportedPostReplies.query().preload('user').preload('replies')
+
+    const reports = [
+      ...reportedPosts.map((post) => ({
+        id: post.id,
+        reportedBy: post.user,
+        forum: post.forum,
+        reason: post.reason,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        type: 'Forum',
+      })),
+      ...reportedReplies.map((replies) => ({
+        id: replies.id,
+        reportedBy: replies.user,
+        replies: replies.replies,
+        reason: replies.reason,
+        createdAt: replies.createdAt,
+        updatedAt: replies.updatedAt,
+        type: 'Balasan Forum',
+      })),
+    ]
+
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Display All Report',
+      data: reports,
     })
   }
 }

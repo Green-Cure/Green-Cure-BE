@@ -40,11 +40,18 @@ router
       router.post('forum', '#controllers/forums_controller.store').use(middleware.auth())
       router.put('forum/:id', '#controllers/forums_controller.update').use(middleware.auth())
       router.delete('forum/:id', '#controllers/forums_controller.destroy').use(middleware.auth())
+      router.get('report', '#controllers/forums_controller.allReport').use(middleware.auth())
       router
-        .delete('reply/:id', '#controllers/forums_controller.destroyForumReply')
+        .post('report/forum/:id', '#controllers/forums_controller.reportForum')
         .use(middleware.auth())
       router
-        .post('forum/:id/reply', '#controllers/forums_controller.replies')
+        .post('report/replies/:id', '#controllers/forums_controller.reportRepliesForum')
+        .use(middleware.auth())
+      router
+        .delete('replies/:id', '#controllers/forums_controller.destroyForumReplies')
+        .use(middleware.auth())
+      router
+        .post('forum/:id/replies', '#controllers/forums_controller.replies')
         .use(middleware.auth())
     })
     router.group(() => {
@@ -55,16 +62,16 @@ router
       router.delete('plants/:id', '#controllers/plants_controller.destroy').use(middleware.auth())
     })
     router.group(() => {
-      router.get('plant-diseases', '#controllers/plant_disease_controller.index')
-      router.get('plant-diseases/:id', '#controllers/plant_disease_controller.show')
+      router.get('plant-diseases', '#controllers/plant_diseases_controller.index')
+      router.get('plant-diseases/:id', '#controllers/plant_diseases_controller.show')
       router
-        .post('plant-diseases', '#controllers/plant_disease_controller.store')
+        .post('plant-diseases', '#controllers/plant_diseases_controller.store')
         .use(middleware.auth())
       router
-        .put('plant-diseases/:id', '#controllers/plant_disease_controller.update')
+        .put('plant-diseases/:id', '#controllers/plant_diseases_controller.update')
         .use(middleware.auth())
       router
-        .delete('plant-diseases/:id', '#controllers/plant_disease_controller.destroy')
+        .delete('plant-diseases/:id', '#controllers/plant_diseases_controller.destroy')
         .use(middleware.auth())
     })
     router.group(() => {
@@ -75,6 +82,9 @@ router
       router
         .get('scan/result/:id', '#controllers/detection_plants_controller.show')
         .use(middleware.auth())
+    })
+    router.group(() => {
+      router.get('user', '#controllers/user_controller.index').use(middleware.auth())
     })
     router.get('weather-today', '#controllers/weathers_controller.today')
   })
