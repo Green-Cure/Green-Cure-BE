@@ -221,7 +221,7 @@ export default class ForumsController {
       message: 'Report Successfully',
     })
   }
-  async allReport({ request, response }: HttpContext) {
+  async allReport({ response }: HttpContext) {
     const reportedPosts = await ReportedPost.query().preload('user').preload('forum')
 
     const reportedReplies = await ReportedPostReplies.query().preload('user').preload('replies')
