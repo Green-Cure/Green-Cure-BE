@@ -133,4 +133,24 @@ export default class ArticlesController {
       message: 'Article deleted!',
     })
   }
+  async related({ params, response }: HttpContext) {
+    const article = await Article.findByOrFail('slug', params.slug)
+    const keywords = article.title.split(' ')
+
+    const relatedArticles = await Article.query()
+      .where('id', '!=', article.id)
+      .where((builder) => {
+        keywords.forEach((keyword) => {
+          builder.orWhere('title', 'like', `%${keyword}%`)
+        })
+      })
+      .limit(3)
+
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Display All Related Article',
+      data: relatedArticles,
+    })
+  }
 }
