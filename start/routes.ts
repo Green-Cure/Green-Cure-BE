@@ -27,6 +27,7 @@ router
     router.group(() => {
       router.get('articles', '#controllers/articles_controller.index')
       router.get('articles/:slug', '#controllers/articles_controller.show')
+      router.get('articles/:slug/related', '#controllers/articles_controller.related')
       router.post('articles', '#controllers/articles_controller.store').use(middleware.auth())
       router.put('articles/:slug', '#controllers/articles_controller.update').use(middleware.auth())
       router
