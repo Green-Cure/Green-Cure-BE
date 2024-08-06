@@ -1,0 +1,12 @@
+[
+  {
+    "diseases": "Hawar Daun",
+    "description": "Penyakit ini disebabkan oleh jamur yang menyerang daun tanaman, menyebabkan daun menguning dan layu.",
+    "symptoms": ["Bercak cokelat pada daun", "Daun menguning dan kering", "Tanaman terlihat lemah"],
+    "solutions": [
+      "Gunakan fungisida yang sesuai",
+      "Hindari kelembapan berlebih",
+      "Pangkas daun yang terinfeksi"
+    ]
+  }
+]

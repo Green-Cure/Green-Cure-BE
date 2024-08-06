@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('CASCADE')
       table.string('image').notNullable()
-      table.boolean('monitor').notNullable().defaultTo(0)
+      table.json('plant_diseases').notNullable()
       table.timestamps()
       table.timestamp('deleted_at').nullable()
     })

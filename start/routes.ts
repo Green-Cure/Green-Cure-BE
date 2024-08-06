@@ -26,6 +26,7 @@ router
       .prefix('auth')
     router.group(() => {
       router.get('articles', '#controllers/articles_controller.index')
+      router.get('articles/newest', '#controllers/articles_controller.newest')
       router.get('articles/:slug', '#controllers/articles_controller.show')
       router.get('articles/:slug/related', '#controllers/articles_controller.related')
       router.post('articles', '#controllers/articles_controller.store').use(middleware.auth())
@@ -84,6 +85,18 @@ router
         .get('scan/result/:id', '#controllers/detection_plants_controller.show')
         .use(middleware.auth())
     })
+    router
+      .group(() => {
+        router.get('monitor', '#controllers/monitor_controller.index')
+        router.get('monitor/:id', '#controllers/monitor_controller.show')
+        router.post('monitor', '#controllers/monitor_controller.store')
+
+        router.post('monitor-task', '#controllers/monitor_controller.storeMonitorTask')
+        router.put('monitor-task/:id', '#controllers/monitor_controller.updateMonitorTask')
+        router.delete('monitor-task/:id', '#controllers/monitor_controller.deleteMonitorTask')
+        router.post('monitor-task/:id/done', '#controllers/monitor_controller.doneTask')
+      })
+      .use(middleware.auth())
     router.group(() => {
       router.get('user', '#controllers/users_controller.index').use(middleware.auth())
     })

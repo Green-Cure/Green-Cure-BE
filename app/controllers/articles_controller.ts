@@ -153,4 +153,13 @@ export default class ArticlesController {
       data: relatedArticles,
     })
   }
+  async newest({ response }: HttpContext) {
+    const article = await Article.query().orderBy('created_at', 'desc').limit(3)
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Display Latest Article',
+      data: article,
+    })
+  }
 }

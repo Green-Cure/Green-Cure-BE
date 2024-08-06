@@ -17,7 +17,7 @@ export default class ResultScanner extends BaseModel {
   declare image: string
 
   @column()
-  declare monitor: boolean
+  declare plant_diseases: Object
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
