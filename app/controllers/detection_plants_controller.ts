@@ -19,7 +19,7 @@ export default class DetectionPlantsController {
     data.image.move(app.makePath('uploads'), {
       name: imageName,
     })
-    const result = await ResultScanner.create({
+    await ResultScanner.create({
       userId: auth.user!.id,
       image: imageName,
       plant_diseases: JSON.stringify(plantDiseases),
