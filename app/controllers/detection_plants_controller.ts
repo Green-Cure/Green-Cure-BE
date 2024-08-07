@@ -27,7 +27,7 @@ export default class DetectionPlantsController {
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
-      message: 'Image uploaded and data saved successfully',
+      message: 'Image uploaded and data saved successfully!',
     })
   }
   async myScan({ auth, response }: HttpContext) {
