@@ -12,4 +12,6 @@
 |
 */
 
-export const policies = {}
+export const policies = {
+  RolePolicy: () => import('#policies/role_policy'),
+}

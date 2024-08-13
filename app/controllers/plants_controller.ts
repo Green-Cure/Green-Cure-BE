@@ -1,4 +1,5 @@
 import Plant from '#models/plant'
+import RolePolicy from '#policies/role_policy'
 import { createPlantValidator, updatePlantValidator } from '#validators/plant'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -44,7 +45,13 @@ export default class PlantsController {
       })
     }
   }
-  async store({ request, response }: HttpContext) {
+  async store({ bouncer, request, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const data = await request.validateUsing(createPlantValidator)
     const imageName = `${cuid()}.${data.image.extname}`
     data.image.move(app.makePath('uploads'), {
@@ -62,7 +69,13 @@ export default class PlantsController {
       message: 'Plant Created',
     })
   }
-  async update({ request, response, params }: HttpContext) {
+  async update({ bouncer, request, response, params }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const data = await request.validateUsing(updatePlantValidator)
     const id = params.id
     const plant = await Plant.findBy('id', id)
@@ -98,7 +111,13 @@ export default class PlantsController {
       message: 'Plant updated',
     })
   }
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ bouncer, params, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const id = params.id
     const plant = await Plant.findBy('id', id)
     if (!plant) {

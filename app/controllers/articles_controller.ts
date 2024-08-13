@@ -4,6 +4,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { cuid } from '@adonisjs/core/helpers'
 import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
+import RolePolicy from '#policies/role_policy'
 
 export default class ArticlesController {
   async index({ request, response }: HttpContext) {
@@ -46,7 +47,14 @@ export default class ArticlesController {
     }
   }
 
-  async store({ request, auth, response }: HttpContext) {
+  async store({ bouncer, request, auth, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
+
     const data = await request.validateUsing(createArticleValidator)
     const imageName = `${cuid()}.${data.image.extname}`
     data.image.move(app.makePath('uploads'), {
@@ -70,7 +78,13 @@ export default class ArticlesController {
     })
   }
 
-  async update({ request, response, params }: HttpContext) {
+  async update({ bouncer, request, response, params }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const data = await request.validateUsing(updateArticleValidator)
     const slug = params.slug
     const article = await Article.findBy('slug', slug)
@@ -110,7 +124,13 @@ export default class ArticlesController {
       message: 'Article updated',
     })
   }
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ bouncer, params, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const slug = params.slug
     const article = await Article.findBy('slug', slug)
     if (!article) {

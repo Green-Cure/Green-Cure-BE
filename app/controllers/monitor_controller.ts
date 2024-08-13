@@ -7,7 +7,11 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class MonitorController {
   async index({ auth, response }: HttpContext) {
     const userId = auth.user!.id
-    const myMonitor = await Monitor.query().where('user_id', userId)
+    const myMonitor = await Monitor.query()
+      .where('user_id', userId)
+      .preload('monitor_task', (taskQuery) => {
+        taskQuery.limit(4)
+      })
     return response.status(200).json({
       statusCode: 200,
       message: 'Display My Monitor',

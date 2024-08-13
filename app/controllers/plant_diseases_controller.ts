@@ -1,4 +1,5 @@
 import PlantDisease from '#models/plant_disease'
+import RolePolicy from '#policies/role_policy'
 import {
   createPlantDiseasesValidator,
   updatePlantDiseasesValidator,
@@ -47,7 +48,13 @@ export default class PlantsDiseases {
       })
     }
   }
-  async store({ request, response }: HttpContext) {
+  async store({ bouncer, request, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const data = await request.validateUsing(createPlantDiseasesValidator)
     const imageName = `${cuid()}.${data.image.extname}`
     data.image.move(app.makePath('uploads'), {
@@ -64,7 +71,13 @@ export default class PlantsDiseases {
       message: 'Plant Created',
     })
   }
-  async update({ request, response, params }: HttpContext) {
+  async update({ bouncer, request, response, params }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const data = await request.validateUsing(updatePlantDiseasesValidator)
     const id = params.id
     const plantDiseases = await PlantDisease.findBy('id', id)
@@ -99,7 +112,13 @@ export default class PlantsDiseases {
       message: 'Plant updated',
     })
   }
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ bouncer, params, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
     const id = params.id
     const plantDiseases = await PlantDisease.findBy('id', id)
     if (!plantDiseases) {
