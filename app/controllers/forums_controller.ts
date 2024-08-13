@@ -12,7 +12,6 @@ import ReportedPostReplies from '#models/reported_post_replies'
 
 export default class ForumsController {
   async index({ response }: HttpContext) {
-    // Memuat relasi pengguna dari setiap postingan forum
     const forums = await ForumPost.query().preload('author').preload('replies')
 
     return response.status(200).json({
@@ -252,6 +251,43 @@ export default class ForumsController {
       code: 'OK',
       message: 'Display All Report',
       data: reports,
+    })
+  }
+
+  async deleteReportReplies({ params, response }: HttpContext) {
+    const id = params.id
+    const reportReplies = await ReportedPostReplies.findBy('id', id)
+    if (!reportReplies) {
+      return response.status(404).json({
+        statusCode: 404,
+        code: 'NOT_FOUND',
+        message: 'Report Reply not found',
+      })
+    }
+
+    await reportReplies.delete()
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Report Reply deleted!',
+    })
+  }
+  async deleteReportForum({ params, response }: HttpContext) {
+    const id = params.id
+    const reportForum = await ReportedPost.findBy('id', id)
+    if (!reportForum) {
+      return response.status(404).json({
+        statusCode: 404,
+        code: 'NOT_FOUND',
+        message: 'Report Forum not found',
+      })
+    }
+
+    await reportForum.delete()
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Report Forum deleted!',
     })
   }
 }

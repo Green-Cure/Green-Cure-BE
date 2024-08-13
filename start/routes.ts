@@ -29,11 +29,13 @@ router
       router.get('articles/newest', '#controllers/articles_controller.newest')
       router.get('articles/:slug', '#controllers/articles_controller.show')
       router.get('articles/:slug/related', '#controllers/articles_controller.related')
+      // admin
       router.post('articles', '#controllers/articles_controller.store').use(middleware.auth())
       router.put('articles/:slug', '#controllers/articles_controller.update').use(middleware.auth())
       router
         .delete('articles/:slug', '#controllers/articles_controller.destroy')
         .use(middleware.auth())
+      // end admin
     })
     router.group(() => {
       router.get('forum', '#controllers/forums_controller.index').use(middleware.auth())
@@ -42,6 +44,7 @@ router
       router.post('forum', '#controllers/forums_controller.store').use(middleware.auth())
       router.put('forum/:id', '#controllers/forums_controller.update').use(middleware.auth())
       router.delete('forum/:id', '#controllers/forums_controller.destroy').use(middleware.auth())
+      // admin
       router.get('report', '#controllers/forums_controller.allReport').use(middleware.auth())
       router
         .post('report/forum/:id', '#controllers/forums_controller.reportForum')
@@ -50,22 +53,33 @@ router
         .post('report/replies/:id', '#controllers/forums_controller.reportRepliesForum')
         .use(middleware.auth())
       router
+        .delete('report/forum/:id', '#controllers/forums_controller.deleteReportForum')
+        .use(middleware.auth())
+      router
+        .delete('report/replies/:id', '#controllers/forums_controller.deleteReportReplies')
+        .use(middleware.auth())
+      router
         .delete('replies/:id', '#controllers/forums_controller.destroyForumReplies')
         .use(middleware.auth())
       router
         .post('forum/:id/replies', '#controllers/forums_controller.replies')
         .use(middleware.auth())
     })
+
     router.group(() => {
       router.get('plants', '#controllers/plants_controller.index')
       router.get('plants/:id', '#controllers/plants_controller.show')
+      // Admin
       router.post('plants', '#controllers/plants_controller.store').use(middleware.auth())
       router.put('plants/:id', '#controllers/plants_controller.update').use(middleware.auth())
       router.delete('plants/:id', '#controllers/plants_controller.destroy').use(middleware.auth())
+      // end admin
     })
+
     router.group(() => {
       router.get('plant-diseases', '#controllers/plant_diseases_controller.index')
       router.get('plant-diseases/:id', '#controllers/plant_diseases_controller.show')
+      // admin
       router
         .post('plant-diseases', '#controllers/plant_diseases_controller.store')
         .use(middleware.auth())
@@ -75,8 +89,10 @@ router
       router
         .delete('plant-diseases/:id', '#controllers/plant_diseases_controller.destroy')
         .use(middleware.auth())
+      // end admin
     })
     router.group(() => {
+      // user
       router.post('scan', '#controllers/detection_plants_controller.scanner').use(middleware.auth())
       router
         .get('scan/result', '#controllers/detection_plants_controller.myScan')
@@ -84,7 +100,9 @@ router
       router
         .get('scan/result/:id', '#controllers/detection_plants_controller.show')
         .use(middleware.auth())
+      // user
     })
+    // User
     router
       .group(() => {
         router.get('monitor', '#controllers/monitor_controller.index')
@@ -97,9 +115,13 @@ router
         router.post('monitor-task/:id/done', '#controllers/monitor_controller.doneTask')
       })
       .use(middleware.auth())
+    // End User
+
+    // Admin
     router.group(() => {
       router.get('user', '#controllers/users_controller.index').use(middleware.auth())
     })
+    // End Admin
     router.get('weather-today', '#controllers/weathers_controller.today')
   })
   .prefix('v1')
