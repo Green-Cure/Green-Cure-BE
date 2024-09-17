@@ -36,6 +36,7 @@ export default class AuthController {
         message: 'Authenticated',
         data: [
           {
+            role: user.role,
             token: token.value!.release(),
           },
         ],
