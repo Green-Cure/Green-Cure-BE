@@ -120,6 +120,7 @@ router
     // Admin
     router.group(() => {
       router.get('user', '#controllers/users_controller.index').use(middleware.auth())
+      router.delete('user/:id', '#controllers/users_controller.destroy').use(middleware.auth())
     })
     // End Admin
     router.get('weather-today', '#controllers/weathers_controller.today')
