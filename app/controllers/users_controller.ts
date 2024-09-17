@@ -18,4 +18,27 @@ export default class UsersController {
       data: user,
     })
   }
+  async destroy({ bouncer, params, response }: HttpContext) {
+    if (await bouncer.with(RolePolicy).denies('admin')) {
+      return response.status(401).json({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      })
+    }
+    const id = params.id
+    const user = await User.findBy('id', id)
+    if (!user) {
+      return response.status(404).json({
+        statusCode: 404,
+        code: 'NOT_FOUND',
+        message: 'Users not found',
+      })
+    }
+    await user.delete()
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'User deleted!',
+    })
+  }
 }
