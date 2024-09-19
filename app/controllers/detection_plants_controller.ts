@@ -3,14 +3,12 @@ import { createScannerValidator } from '#validators/scanner'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
 
 export default class DetectionPlantsController {
   async scanner({ request, auth, response }: HttpContext) {
-    const plantDiseases = JSON.parse([
+    const data = await request.validateUsing(createScannerValidator)
+    const imageName = `${cuid()}.${data.image.extname}`
+    const scanData = [
       {
         diseases: 'Hawar Daun',
         description:
@@ -26,9 +24,7 @@ export default class DetectionPlantsController {
           'Pangkas daun yang terinfeksi',
         ],
       },
-    ])
-    const data = await request.validateUsing(createScannerValidator)
-    const imageName = `${cuid()}.${data.image.extname}`
+    ]
 
     data.image.move(app.makePath('uploads'), {
       name: imageName,
@@ -38,7 +34,7 @@ export default class DetectionPlantsController {
     const resultScanner = await ResultScanner.create({
       userId: auth.user!.id,
       image: imageName,
-      plant_diseases: JSON.stringify(plantDiseases),
+      plant_diseases: JSON.stringify(scanData),
     })
 
     // Kembalikan respons beserta data yang baru saja dibuat
