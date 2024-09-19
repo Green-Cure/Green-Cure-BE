@@ -16,18 +16,24 @@ export default class DetectionPlantsController {
     const plantDiseases = JSON.parse(fs.readFileSync(plantDiseasesPath, 'utf-8'))
     const data = await request.validateUsing(createScannerValidator)
     const imageName = `${cuid()}.${data.image.extname}`
+
     data.image.move(app.makePath('uploads'), {
       name: imageName,
     })
-    await ResultScanner.create({
+
+    // Simpan data ke dalam database
+    const resultScanner = await ResultScanner.create({
       userId: auth.user!.id,
       image: imageName,
       plant_diseases: JSON.stringify(plantDiseases),
     })
+
+    // Kembalikan respons beserta data yang baru saja dibuat
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
       message: 'Image uploaded and data saved successfully!',
+      data: resultScanner, // Tampilkan data yang baru dibuat
     })
   }
   async myScan({ auth, response }: HttpContext) {
