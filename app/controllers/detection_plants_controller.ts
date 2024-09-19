@@ -3,19 +3,28 @@ import { createScannerValidator } from '#validators/scanner'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
 
 export default class DetectionPlantsController {
   async scanner({ request, auth, response }: HttpContext) {
-    const fileName = fileURLToPath(import.meta.url)
-    const dirName = dirname(fileName)
-    const plantDiseasesPath = path.join(dirName, '..', 'data', 'plant_diseases.json')
-    const plantDiseases = JSON.parse(fs.readFileSync(plantDiseasesPath, 'utf-8'))
     const data = await request.validateUsing(createScannerValidator)
     const imageName = `${cuid()}.${data.image.extname}`
+    const scanData = [
+      {
+        diseases: 'Hawar Daun',
+        description:
+          'Penyakit ini disebabkan oleh jamur yang menyerang daun tanaman, menyebabkan daun menguning dan layu.',
+        symptoms: [
+          'Bercak cokelat pada daun',
+          'Daun menguning dan kering',
+          'Tanaman terlihat lemah',
+        ],
+        solutions: [
+          'Gunakan fungisida yang sesuai',
+          'Hindari kelembapan berlebih',
+          'Pangkas daun yang terinfeksi',
+        ],
+      },
+    ]
 
     data.image.move(app.makePath('uploads'), {
       name: imageName,
@@ -25,7 +34,7 @@ export default class DetectionPlantsController {
     const resultScanner = await ResultScanner.create({
       userId: auth.user!.id,
       image: imageName,
-      plant_diseases: JSON.stringify(plantDiseases),
+      plant_diseases: JSON.stringify(scanData),
     })
 
     // Kembalikan respons beserta data yang baru saja dibuat
