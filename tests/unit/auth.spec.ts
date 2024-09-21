@@ -1,8 +1,6 @@
 import { test } from '@japa/runner'
-import { afterEach } from 'node:test'
 
 test.group('Authenticated', () => {
-  let userId: string
   test('user can register', async ({ client }) => {
     try {
       const response = await client.post('/v1/auth/register').json({

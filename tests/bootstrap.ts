@@ -4,7 +4,6 @@ import app from '@adonisjs/core/services/app'
 import type { Config } from '@japa/runner/types'
 import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import testUtils from '@adonisjs/core/services/test_utils'
-import env from '#start/env'
 
 /**
  * This file is imported by the "bin/test.ts" entrypoint file
