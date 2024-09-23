@@ -70,7 +70,7 @@ export default class ScarecrowsController {
       })
 
       const generatedContent = apiResponse.data.candidates[0].content.parts[0].text
-      const scarecrow = Scarecrow.create({
+      const scarecrow = await Scarecrow.create({
         userId: auth.user!.id,
         question: text,
         answer: generatedContent,
