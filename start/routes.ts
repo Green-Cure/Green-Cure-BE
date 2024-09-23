@@ -102,6 +102,12 @@ router
         .use(middleware.auth())
       // user
     })
+    router.group(() => {
+      // user
+      router.get('scarecrow', '#controllers/scarecrows_controller.show').use(middleware.auth())
+      router.post('scarecrow', '#controllers/scarecrows_controller.generate').use(middleware.auth())
+      // user
+    })
     // User
     router
       .group(() => {
