@@ -7,15 +7,23 @@ export default class ScarecrowsController {
     const userId = auth.user!.id
     const scarecrows = await Scarecrow.query().where('user_id', userId)
 
+    const scarecrowsWithHtmlAnswers = scarecrows.map((scarecrow) => {
+      const answerHtml = scarecrow.answer
+        .replace(/\n/g, '<br>') // replace newline characters with <br> tags
+        .replace(/\*(.*?)\*/g, '<b>$1</b>') // replace asterisks with <b> tags
+
+      return {
+        id: scarecrow.id,
+        question: scarecrow.question,
+        answer: `<div>${answerHtml}</div>`,
+      }
+    })
+
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
       message: 'Display All Data',
-      data: scarecrows.map((scarecrow) => ({
-        id: scarecrow.id,
-        question: scarecrow.question,
-        answer: scarecrow.answer,
-      })),
+      data: scarecrowsWithHtmlAnswers,
     })
   }
   async detail({ auth, response, params }: HttpContext) {
@@ -35,6 +43,10 @@ export default class ScarecrowsController {
       })
     }
 
+    const answerHtml = scarecrow.answer
+      .replace(/\n/g, '<br>') // replace newline characters with <br> tags
+      .replace(/\*(.*?)\*/g, '<b>$1</b>') // replace asterisks with <b> tags
+
     return response.status(200).json({
       statusCode: 200,
       code: 'OK',
@@ -42,7 +54,7 @@ export default class ScarecrowsController {
       data: {
         id: scarecrow.id,
         question: scarecrow.question,
-        answer: scarecrow.answer,
+        answer: `<div>${answerHtml}</div>`,
       },
     })
   }
@@ -70,6 +82,10 @@ export default class ScarecrowsController {
       })
 
       const generatedContent = apiResponse.data.candidates[0].content.parts[0].text
+      const answerHtml = generatedContent
+        .replace(/\n/g, '<br>') // replace newline characters with <br> tags
+        .replace(/\*(.*?)\*/g, '<b>$1</b>') // replace asterisks with <b> tags
+
       const scarecrow = await Scarecrow.create({
         userId: auth.user!.id,
         question: text,
@@ -80,7 +96,11 @@ export default class ScarecrowsController {
         statusCode: 200,
         code: 'OK',
         message: 'Question Subbmitted',
-        data: scarecrow,
+        data: {
+          id: scarecrow.id,
+          question: scarecrow.question,
+          answer: `<div>${answerHtml}</div>`,
+        },
       })
     } catch (error) {
       return response.status(500).json({ error: 'Failed to generate content' })
