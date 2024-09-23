@@ -12,9 +12,38 @@ export default class ScarecrowsController {
       code: 'OK',
       message: 'Display All Data',
       data: scarecrows.map((scarecrow) => ({
+        id: scarecrow.id,
         question: scarecrow.question,
         answer: scarecrow.answer,
       })),
+    })
+  }
+  async detail({ auth, response, params }: HttpContext) {
+    const userId = auth.user!.id
+    const scarecrowId = params.id
+
+    const scarecrow = await Scarecrow.query()
+      .where('user_id', userId)
+      .where('id', scarecrowId)
+      .first()
+
+    if (!scarecrow) {
+      return response.status(404).json({
+        statusCode: 404,
+        code: 'NOT_FOUND',
+        message: 'Scarecrow not found',
+      })
+    }
+
+    return response.status(200).json({
+      statusCode: 200,
+      code: 'OK',
+      message: 'Display Scarecrow Data',
+      data: {
+        id: scarecrow.id,
+        question: scarecrow.question,
+        answer: scarecrow.answer,
+      },
     })
   }
   async generate({ request, response, auth }: HttpContext) {
