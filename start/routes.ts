@@ -106,6 +106,9 @@ router
       // user
       router.get('scarecrow', '#controllers/scarecrows_controller.show').use(middleware.auth())
       router.post('scarecrow', '#controllers/scarecrows_controller.generate').use(middleware.auth())
+      router
+        .get('scarecrow/:id', '#controllers/scarecrows_controller.detail')
+        .use(middleware.auth())
       // user
     })
     // User
