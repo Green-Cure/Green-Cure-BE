@@ -70,7 +70,7 @@ export default class ScarecrowsController {
       })
 
       const generatedContent = apiResponse.data.candidates[0].content.parts[0].text
-      Scarecrow.create({
+      const scarecrow = Scarecrow.create({
         userId: auth.user!.id,
         question: text,
         answer: generatedContent,
@@ -80,7 +80,7 @@ export default class ScarecrowsController {
         statusCode: 200,
         code: 'OK',
         message: 'Question Subbmitted',
-        data: generatedContent,
+        data: scarecrow,
       })
     } catch (error) {
       return response.status(500).json({ error: 'Failed to generate content' })
